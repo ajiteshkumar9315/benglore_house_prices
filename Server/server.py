@@ -1,7 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 import util
+from pathlib import Path
 
-app = Flask(__name__)
+client_path: Path = Path('.').absolute().parent / "Client"
+
+app = Flask(__name__, '/', str(client_path))
+
+util.load_saved_artifacts()
 
 
 @app.route('/get_location_names', methods=['GET'])
@@ -28,7 +33,14 @@ def predict_home_price():
 
     return response
 
+@app.route('/', methods=['GET'])
+def index():
+    return send_from_directory(client_path, 'index.html')
+
+
+
 if __name__ == "__main__":
     print("Starting Python Flask Server For Home Price Prediction...")
     util.load_saved_artifacts()
     app.run()
+
